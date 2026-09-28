@@ -1,0 +1,12 @@
+name: CI
+
+on: [push]                                # quand : à chaque push
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest                # sur quelle machine : un Linux prêté par GitHub
+    steps:
+      - uses: actions/checkout@v7         # 1. récupérer le code
+      - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
+      - run: uv sync                      # 3. installer les dépendances
+      - run: uv run pytest                # 4. lancer les tests
