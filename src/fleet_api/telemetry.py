@@ -274,7 +274,6 @@ def fleet_summary(
         >>> fleet_summary([])
         {'robot_count': 0, 'average_battery_pct': 0.0, 'low_battery_count': 0}
     """
-    # TODO: à tester
     levels = [battery_percentage(r.voltage_mv) for r in readings]
     return {
         "robot_count": len(readings),

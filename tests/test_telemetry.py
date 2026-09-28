@@ -192,4 +192,6 @@ batterie faible
 def test_fleet_summary():
     """Test de la fonction fleet_summary."""
     assert fleet_summary([]) == {'robot_count': 0, 'average_battery_pct': 0.0, 'low_battery_count': 0}  # flotte vide
-    assert fleet_summary([mesure(12600), mesure(10500)], threshold_pct=20.0) == {'robot_count': 2, 'average_battery_pct': 50.0, 'low_battery_count': 1}    
+    assert fleet_summary([mesure(12600), mesure(10500)], threshold_pct=20.0) == {'robot_count': 2, 'average_battery_pct': 50.0, 'low_battery_count': 1} 
+    assert fleet_summary([mesure(12600), mesure(12000), mesure(11000)], threshold_pct=20.0) == {'robot_count': 3, 'average_battery_pct': 66.7, 'low_battery_count': 1}  # flotte avec plusieurs mesures
+    assert fleet_summary([mesure(12600), mesure(12000), mesure(11000), mesure(10500)], threshold_pct=20.0) == {'robot_count': 4, 'average_battery_pct': 58.3, 'low_battery_count': 2}  # flotte avec plusieurs mesures   
