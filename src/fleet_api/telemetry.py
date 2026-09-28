@@ -82,7 +82,6 @@ def is_low_battery(battery_pct: float, threshold_pct: float = LOW_BATTERY_PCT) -
         >>> is_low_battery(50.0)
         False
     """
-    # TODO: à tester
     return battery_pct < threshold_pct
 
 
@@ -123,12 +122,10 @@ def path_length_m(positions: list[Position]) -> float:
         >>> path_length_m([])
         0.0
     """
-    # TODO: à tester
     total = 0.0
-    for i in range(len(positions) - 2):
+    for i in range(len(positions) - 1):
         total += distance_m(positions[i], positions[i + 1])
     return total
-
 
 def average_speed_mps(path_length_m: float, elapsed_s: float) -> float | None:
     """Vitesse moyenne sur un trajet, en mètres par seconde.
@@ -147,7 +144,6 @@ def average_speed_mps(path_length_m: float, elapsed_s: float) -> float | None:
         >>> average_speed_mps(10.0, 0.0) is None
         True
     """
-    # TODO: à tester
     if elapsed_s <= 0:
         return None
     return path_length_m / elapsed_s
@@ -175,7 +171,6 @@ def estimate_runtime_minutes(
         >>> estimate_runtime_minutes(50.0, 0.0) is None
         True
     """
-    # TODO: à tester
     if drain_pct_per_min <= 0:
         return None
     return round(battery_pct / drain_pct_per_min, 1)
@@ -225,7 +220,6 @@ def robot_state(
     Returns:
         L'état du robot.
     """
-    # TODO: à tester
     if now_s - reading.timestamp_s > grace_s:
         return RobotState.OFFLINE
     if reading.is_charging:
@@ -251,7 +245,6 @@ def detect_voltage_dropouts(readings: list[Reading], max_drop_mv: int) -> list[i
         de la mesure **d'arrivée** de chaque chute anormale. Liste vide si aucune
         chute.
     """
-    # TODO: à tester
     dropouts = []
     for i in range(1, len(readings)):
         drop = readings[i - 1].voltage_mv - readings[i].voltage_mv
@@ -285,7 +278,7 @@ def fleet_summary(
     levels = [battery_percentage(r.voltage_mv) for r in readings]
     return {
         "robot_count": len(readings),
-        "average_battery_pct": round(sum(levels) / len(levels), 1),
+        "average_battery_pct": round(sum(levels) / len(levels), 1) if levels else 0.0,
         "low_battery_count": sum(
             1 for lvl in levels if is_low_battery(lvl, threshold_pct)
         ),
