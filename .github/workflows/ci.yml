@@ -5,8 +5,7 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:                      
-
- #CAHCEAHACEAHE CACHE TEST HAHAHAHA
+#COLDDDD
 jobs:
   # on remet les uses a chaque fois car chaque job est isolé et n'a pas accès aux machines des autres jobs
   lint :
