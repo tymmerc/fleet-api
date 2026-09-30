@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
       - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
+        with:
+          enable-cache: true
       - run: uv sync                      # 3. installer les dépendances
       - run: uv run ruff check .          # 4. check pour des erreurs de linting
       - run: uv run ruff format --check . # 5. "dis-moi juste si un fichier devrait être reformaté, et échoue si c'est le cas"
@@ -22,6 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
       - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
+        with: 
+          enable-cache: true
       - run: uv sync                      # 3. installer les dépendances
       - run: uv run pytest                # 4. lancer les tests
   build: 
@@ -29,5 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
       - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
+        with:
+          enable-cache: true
       - run: uv sync                      # 3. installer les dépendances
       - run: uv build                     # 4. construire le package
