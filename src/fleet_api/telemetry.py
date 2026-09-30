@@ -127,6 +127,7 @@ def path_length_m(positions: list[Position]) -> float:
         total += distance_m(positions[i], positions[i + 1])
     return total
 
+
 def average_speed_mps(path_length_m: float, elapsed_s: float) -> float | None:
     """Vitesse moyenne sur un trajet, en mètres par seconde.
 
