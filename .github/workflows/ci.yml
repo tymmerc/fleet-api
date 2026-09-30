@@ -1,48 +1,52 @@
 name: CI
 
-on:    
+on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:                      
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions : {}
 
 jobs:
   # on remet les uses a chaque fois car chaque job est isolé et n'a pas accès aux machines des autres jobs
   lint :
     runs-on: ubuntu-latest                # sur quelle machine : un Linux prêté par GitHub
+    permissions:
+      contents: read                     # pour checkout
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
-      - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
-        with:
-          enable-cache: true
-      - run: uv sync                      # 3. installer les dépendances
-      - run: uv run ruff check .          # 4. check pour des erreurs de linting    
-      - run: uv run ruff format --check . # 5. "dis-moi juste si un fichier devrait être reformaté, et échoue si c'est le cas"
+      - uses : ./.github/actions/setup      # 2. installer uv et les dépendances
+      - run: uv run ruff check .          # 3. check pour des erreurs de linting
+      - run: uv run ruff format --check . # 4. "dis-moi juste si un fichier devrait être reformaté, et échoue si c'est le cas"
   test:
     runs-on: ubuntu-latest                # sur quelle machine : un Linux prêté par GitHub
+    permissions :
+      contents: read                     # pour checkout
     strategy:
       fail-fast: false                    # un échec n'annule pas les autres versions
       matrix:
         python-version: ['3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
-      - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
+      - uses : ./.github/actions/setup      # 2. installer uv et les dépendances
         with:
-          enable-cache: true
           python-version: ${{ matrix.python-version }}  # uv sync et uv run utilisent la version de la combinaison
-      - run: uv sync                      # 3. installer les dépendances
-      - run: uv run pytest --cov=fleet_api --cov-report=term-missing --cov-report=html  # 4. tests + rapport de couverture (htmlcov/)
-      - uses: actions/upload-artifact@v7  # 5. publier le rapport, téléchargeable depuis la page du run
+      - run: uv run pytest --cov=fleet_api --cov-report=term-missing --cov-report=html  # 3. tests + rapport de couverture (htmlcov/)
+      - uses: actions/upload-artifact@v7  # 4. publier le rapport, téléchargeable depuis la page du run
         with:
           name: couverture-python-${{ matrix.python-version }}  # un nom par version, sinon conflit entre les 3 tâches
           path: htmlcov/
           retention-days: 7
-  build: 
+  build:
     runs-on: ubuntu-latest                # sur quelle machine : un Linux prêté par GitHub
+    permissions :
+      contents: read                     # pour checkout
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
-      - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
-        with:
-          enable-cache: true
-      - run: uv sync                      # 3. installer les dépendances
-      - run: uv build                     # 4. construire le package
+      - uses : ./.github/actions/setup      # 2. installer uv et les dépendances
+      - run: uv build                     # 3. construire le package

@@ -1,0 +1,17 @@
+repos:
+  # 1. ruff : les mêmes vérifications que ta tâche lint
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.9                  # la même version de ruff que ton projet
+    hooks:
+      - id: ruff-check
+        args: [--fix]             # corrige ce qu'il peut (comme ruff check --fix)
+      - id: ruff-format
+
+  # 2. les "hooks d'hygiène" : petits nettoyages de base
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace   # supprime les espaces en fin de ligne
+      - id: end-of-file-fixer     # un seul retour à la ligne à la fin de chaque fichier
+      - id: check-yaml            # vérifie que tes .yml sont valides
+      - id: check-added-large-files  # empêche de commiter un gros fichier par erreur
