@@ -85,9 +85,9 @@ def test_battery_percentage_rejette_des_bornes_incoherentes():
 # Trois de ces fonctions ne respectent pas leur spécification.
 # ---------------------------------------------------------------------------
 
-""" 
+"""
 is_low_battery : Vérifie si le pourcentage de batterie est inférieur au seuil.
-Cas attendus : 
+Cas attendus :
 - Pourcentage inférieur au seuil : retourne True
 - Pourcentage égal au seuil : retourne False
 - Pourcentage supérieur au seuil : retourne False
@@ -151,7 +151,7 @@ def test_average_speed_mps():
 estimate_runtime_minutes : Estime l'autonomie restante en minutes.
 Cas attendus :
 - Consommation nulle ou négative : retourne None
-- Consommation positive : retourne l'autonomie restante en minutes  
+- Consommation positive : retourne l'autonomie restante en minutes
 """
 
 
