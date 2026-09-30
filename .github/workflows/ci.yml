@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:                      
-#COLDDDD
+
 jobs:
   # on remet les uses a chaque fois car chaque job est isolé et n'a pas accès aux machines des autres jobs
   lint :
@@ -20,11 +20,16 @@ jobs:
       - run: uv run ruff format --check . # 5. "dis-moi juste si un fichier devrait être reformaté, et échoue si c'est le cas"
   test:
     runs-on: ubuntu-latest                # sur quelle machine : un Linux prêté par GitHub
+    strategy:
+      fail-fast: false                    # un échec n'annule pas les autres versions
+      matrix:
+        python-version: ['3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v7         # 1. récupérer le code
       - uses: astral-sh/setup-uv@v10.2.0  # 2. installer uv
-        with: 
+        with:
           enable-cache: true
+          python-version: ${{ matrix.python-version }}  # uv sync et uv run utilisent la version de la combinaison
       - run: uv sync                      # 3. installer les dépendances
       - run: uv run pytest                # 4. lancer les tests
   build: 
