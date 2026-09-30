@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"    # les actions de tes workflows
+    directories: ["/", "/.github/actions/setup"]
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "uv"                # tes dépendances Python (uv.lock)
+    directory: "/"
+    schedule:
+      interval: "weekly"
