@@ -9,7 +9,7 @@ inputs:                                     # ses paramètres
 runs:
   using: 'composite'                        # "c'est une action composite"
   steps:                                    # le bloc répété, écrit une seule fois
-    - uses: astral-sh/setup-uv@v10.0.1
+    - uses: astral-sh/setup-uv@v10.2.0
       with:
         enable-cache: true
     - shell: bash                           # obligatoire dans une composite !
