@@ -1,0 +1,16 @@
+name: 'Préparer l''environnement'           # le nom de la "fonction"
+description: 'Installe uv et les dépendances'
+
+inputs:                                     # ses paramètres
+  python-version:
+    required: false
+    default: '3.14'                         # valeur si on ne précise rien
+
+runs:
+  using: 'composite'                        # "c'est une action composite"
+  steps:                                    # le bloc répété, écrit une seule fois
+    - uses: astral-sh/setup-uv@v10.0.1
+      with:
+        enable-cache: true
+    - shell: bash                           # obligatoire dans une composite !
+      run: uv sync --python ${{ inputs.python-version }}
