@@ -181,6 +181,7 @@ def test_detect_voltage_dropouts():
     """Test de la fonction detect_voltage_dropouts."""
     assert detect_voltage_dropouts([] , max_drop_mv=500 ) == []  # liste vide
     assert detect_voltage_dropouts([mesure(12600), mesure(12000)], max_drop_mv=500) == [1]  # une coupure détectée
+    assert detect_voltage_dropouts([mesure(12000), mesure(11800)], max_drop_mv=500) == []  # petite baisse
 
 '''
 fleet_summary : Résume l'état d'une flotte de robots à partir d'une liste de mesures.
