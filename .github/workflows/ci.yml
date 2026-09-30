@@ -31,7 +31,12 @@ jobs:
           enable-cache: true
           python-version: ${{ matrix.python-version }}  # uv sync et uv run utilisent la version de la combinaison
       - run: uv sync                      # 3. installer les dépendances
-      - run: uv run pytest                # 4. lancer les tests
+      - run: uv run pytest --cov=fleet_api --cov-report=term-missing --cov-report=html  # 4. tests + rapport de couverture (htmlcov/)
+      - uses: actions/upload-artifact@v7  # 5. publier le rapport, téléchargeable depuis la page du run
+        with:
+          name: couverture-python-${{ matrix.python-version }}  # un nom par version, sinon conflit entre les 3 tâches
+          path: htmlcov/
+          retention-days: 7
   build: 
     runs-on: ubuntu-latest                # sur quelle machine : un Linux prêté par GitHub
     steps:
