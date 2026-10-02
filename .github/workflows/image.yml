@@ -36,14 +36,21 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Afficher les tags et les libellés OCI de l'image publiée
+          sbom: true
+          provenance: mode=max
+      - name: Afficher les tags, les libellés et la provenance de l'image publiée
         if: github.event_name != 'pull_request'
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           IMAGE_REF: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
         run: |
           echo "Tags produits :"; echo "$TAGS"
+          echo "--- Manifestes (image + attestations)"
+          docker buildx imagetools inspect "$IMAGE_REF" | head -20
+          echo "--- Libellés OCI"
           docker buildx imagetools inspect --format '{{json .Image.Config.Labels}}' "$IMAGE_REF"
+          echo "--- Provenance (début)"
+          docker buildx imagetools inspect --format '{{json .Provenance}}' "$IMAGE_REF" | head -c 900; echo
       - name: Choisir l'image à scanner (le tag sha)
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
