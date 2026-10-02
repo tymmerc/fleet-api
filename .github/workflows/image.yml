@@ -15,10 +15,28 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v6
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha,format=long
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
       - uses: docker/build-push-action@v7
         with:
           context: .
           push: true
-          tags: ghcr.io/tymmerc/fleet-api:sha-${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Afficher les tags et les libellés OCI de l'image publiée
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          IMAGE_REF: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
+        run: |
+          echo "Tags produits :"; echo "$TAGS"
+          docker buildx imagetools inspect --format '{{json .Image.Config.Labels}}' "$IMAGE_REF"
