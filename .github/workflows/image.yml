@@ -10,7 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
-      - uses: docker/login-action@v4
+      - name: Connexion à GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -28,15 +30,28 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           context: .
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
+          load: ${{ github.event_name == 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Afficher les tags et les libellés OCI de l'image publiée
+        if: github.event_name != 'pull_request'
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           IMAGE_REF: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
         run: |
           echo "Tags produits :"; echo "$TAGS"
           docker buildx imagetools inspect --format '{{json .Image.Config.Labels}}' "$IMAGE_REF"
+      - name: Choisir l'image à scanner (le tag sha)
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: echo "IMAGE_REF=$(echo "$TAGS" | grep ':sha-' | head -1)" >> "$GITHUB_ENV"
+      - name: Scanner l'image (Trivy)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE_REF }}
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'
