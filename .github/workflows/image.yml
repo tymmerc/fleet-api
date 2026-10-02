@@ -20,3 +20,5 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/tymmerc/fleet-api:sha-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
